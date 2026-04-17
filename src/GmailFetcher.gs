@@ -5,33 +5,43 @@
  * 返ってきたメッセージを Classifier に渡す前の中間表現に整形する。
  */
 
-const SEARCH_QUERY =
-  'newer_than:1d (' +
-  [
-    'インターン',
-    'インターンシップ',
-    'internship',
-    '募集',
-    'エントリー',
-    '説明会',
-    '締切',
-    '締め切り',
-    '締切り',
-    'deadline',
-    '選考',
-  ].join(' OR ') +
-  ')';
+const KEYWORDS = [
+  'インターン',
+  'インターンシップ',
+  'internship',
+  '募集',
+  'エントリー',
+  '説明会',
+  '締切',
+  '締め切り',
+  '締切り',
+  'deadline',
+  '選考',
+];
 
 const MAX_THREADS = 50;
 const BODY_CHAR_LIMIT = 2000;
 const PROCESSED_IDS_KEY = 'PROCESSED_MESSAGE_IDS';
 const PROCESSED_IDS_RETENTION = 500; // 直近 500 件だけ保持
 
+function buildSearchQuery_(targetEmail) {
+  const keywordPart = '(' + KEYWORDS.join(' OR ') + ')';
+  const parts = ['newer_than:1d', keywordPart];
+  if (targetEmail) {
+    // Cc/Bcc も含めて当該アドレス宛のものに絞る (deliveredto: は転送経路で外れるケースがあるため to: を採用)
+    parts.unshift('to:' + targetEmail);
+  }
+  return parts.join(' ');
+}
+
 /**
+ * @param {string} [targetEmail] 指定すると `to:<address>` で絞り込む
  * @returns {Array<{messageId: string, threadId: string, subject: string, from: string, date: Date, bodySnippet: string, permalink: string}>}
  */
-function fetchCandidateMessages_() {
-  const threads = GmailApp.search(SEARCH_QUERY, 0, MAX_THREADS);
+function fetchCandidateMessages_(targetEmail) {
+  const query = buildSearchQuery_(targetEmail);
+  Logger.log('Gmail search query: ' + query);
+  const threads = GmailApp.search(query, 0, MAX_THREADS);
   const processed = loadProcessedIds_();
   const now = new Date();
   const cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);

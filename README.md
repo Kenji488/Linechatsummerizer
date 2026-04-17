@@ -65,9 +65,12 @@ LINE Notify はサービス終了 (2025年3月) のため、Messaging API を使
 
 | キー | デフォルト | 説明 |
 |---|---|---|
+| `TARGET_EMAIL` | (空) | 対象 Gmail アドレス (例: `kenji.naito050409@gmail.com`)。指定すると Gmail 検索に `to:<address>` が付与され、そのアドレス宛のメールだけが対象になる。複数アドレスを 1 つの受信箱で受けている人向け。空欄なら受信箱全体が対象 |
 | `CLAUDE_MODEL` | `claude-haiku-4-5-20251001` | 使用する Claude モデル |
 | `DIGEST_HOUR_JST` | `7` | ダイジェスト送信時刻 (0-23) |
 | `NOTIFY_WHEN_EMPTY` | `true` | 該当 0 件の日にも「該当なし」通知を送るか |
+
+> 注: GAS は実行者本人の Gmail のみ参照できます。`TARGET_EMAIL` は他人のメールを覗く設定ではなく、自分の受信箱内で「どのアドレス宛か」を絞り込むフィルタです。GAS プロジェクトは対象アドレスの本人 (= `kenji.naito050409@gmail.com`) の Google アカウントで作成してください。
 
 変更後は `setupTrigger` を再実行するとトリガー時刻が反映されます。
 

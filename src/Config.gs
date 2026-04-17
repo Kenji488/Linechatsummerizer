@@ -7,6 +7,8 @@
  *   LINE_USER_ID              : 通知先 LINE ユーザー ID (U で始まる文字列)
  *
  * 任意 (未設定時はデフォルト値を使用):
+ *   TARGET_EMAIL              : 対象 Gmail アドレス。指定すると `to:<address>` で絞り込む
+ *                               (例: kenji.naito050409@gmail.com)。未設定なら受信箱全体が対象
  *   CLAUDE_MODEL              : 使用する Claude モデル ID
  *   DIGEST_HOUR_JST           : ダイジェスト送信時刻 (時) JST
  *   NOTIFY_WHEN_EMPTY         : 該当 0 件でも通知するか ('true' / 'false')
@@ -38,6 +40,7 @@ function getConfig_() {
     anthropicApiKey: props.getProperty('ANTHROPIC_API_KEY'),
     lineChannelAccessToken: props.getProperty('LINE_CHANNEL_ACCESS_TOKEN'),
     lineUserId: props.getProperty('LINE_USER_ID'),
+    targetEmail: get('TARGET_EMAIL', '').trim(),
     claudeModel: get('CLAUDE_MODEL', DEFAULTS.CLAUDE_MODEL),
     digestHourJst: parseInt(get('DIGEST_HOUR_JST', DEFAULTS.DIGEST_HOUR_JST), 10),
     notifyWhenEmpty: get('NOTIFY_WHEN_EMPTY', DEFAULTS.NOTIFY_WHEN_EMPTY) === 'true',

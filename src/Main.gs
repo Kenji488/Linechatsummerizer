@@ -7,9 +7,10 @@
 
 function dailyDigest() {
   const config = getConfig_();
-  Logger.log('dailyDigest start: model=' + config.claudeModel);
+  Logger.log('dailyDigest start: model=' + config.claudeModel +
+    (config.targetEmail ? ', target=' + config.targetEmail : ''));
 
-  const candidates = fetchCandidateMessages_();
+  const candidates = fetchCandidateMessages_(config.targetEmail);
   Logger.log('Gmail candidates: ' + candidates.length);
 
   const hits = classifyCandidates_(candidates);
@@ -49,7 +50,8 @@ function setupTrigger() {
 }
 
 function testRun() {
-  const candidates = fetchCandidateMessages_();
+  const config = getConfig_();
+  const candidates = fetchCandidateMessages_(config.targetEmail);
   Logger.log('Candidates (' + candidates.length + '):');
   candidates.forEach(c => Logger.log(' - ' + c.subject + ' / ' + c.from));
 
